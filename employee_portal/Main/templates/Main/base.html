@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="icon" href="static\favicon.jpg" type="image/jpg" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %} {% endblock title %}</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
+
+  <style>
+    .container-fluid {
+      color: antiquewhite;
+    }
+
+    @media all and (min-width: 991px) {
+      .container {
+        position: relative;
+        left: -46px;
+      }
+    }
+    img {
+      width: 150px;
+    }
+  </style>
+
+  <header class="p-3 text-bg-dark">
+    <div class="container">
+      <div
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"
+      >
+        <a href="/"><img src="static\logo1.png" alt="Logo" srcset="" /></a>
+
+        <ul
+          class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"
+        >
+          <li><a href="/" class="nav-link px-2 text-white">Home</a></li>
+          <li>
+            <a href="/contacts" class="nav-link px-2 text-white">Contact Us</a>
+          </li>
+          <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
+          <li><a href="/about" class="nav-link px-2 text-white">About</a></li>
+        </ul>
+
+        <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+          <input
+            type="search"
+            class="form-control form-control-dark text-bg-dark"
+            placeholder="Search..."
+            aria-label="Search"
+          />
+        </form>
+
+        <div class="text-end ms-4">
+          <button type="button" id="clock-start" class="btn btn-primary">
+            Clock Start
+          </button>
+          <button
+            type="button"
+            id="clock-stop"
+            class="btn btn-secondary disabled"
+          >
+            Clock Stop
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {% block body %} {% endblock %}
+
+  <footer class="py-3 my-4">
+    <div class="follow d-flex flex-row justify-content-center">
+      <li class="p-2 list-unstyled text-muted">FOLLOW US</li>
+      <li class="p-2 list-unstyled"><i class="fa fa-youtube"></i></li>
+      <li class="p-2 list-unstyled"><i class="fa fa-twitter"></i></li>
+      <li class="p-2 list-unstyled"><i class="fa fa-facebook"></i></li>
+      <li class="p-2 list-unstyled"><i class="fa fa-linkedin"></i></li>
+      <li class="p-2 list-unstyled">
+        <i class="fa-brands fa-instagram"></i>
+      </li>
+    </div>
+    <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+      <li class="nav-item">
+        <a href="/" class="nav-link px-2 text-muted">Home</a>
+      </li>
+      <li class="nav-item">
+        <a href="/contacts" class="nav-link px-2 text-muted">Contact Us</a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link px-2 text-muted">FAQs</a>
+      </li>
+      <li class="nav-item">
+        <a href="/about" class="nav-link px-2 text-muted">About</a>
+      </li>
+    </ul>
+    <p class="text-center text-muted">© 2022 Company, Inc</p>
+  </footer>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://kit.fontawesome.com/c44084534b.js"
+    crossorigin="anonymous"
+  ></script>
+</html>
+
+<script>
+  const clockStartButton = document.getElementById("clock-start");
+  const clockStopButton = document.getElementById("clock-stop");
+
+  if (localStorage.getItem("clockStartTime")) {
+    clockStartButton.classList.add("disabled");
+    clockStopButton.classList.remove("disabled");
+  }
+
+  window.onbeforeunload = function () {
+    if (localStorage.getItem("clockStartTime")) {
+      handleClockStop();
+      return "You have unsaved changes!";
+    }
+  };
+
+  function handleClockStart() {
+    const startTime = new Date().toISOString();
+
+    // Store the start time in localStorage or send it directly to the server
+    localStorage.setItem("clockStartTime", startTime);
+    //   console.log('Clock Start Time:', startTime);
+    clockStartButton.classList.add("disabled");
+    clockStopButton.classList.remove("disabled");
+  }
+
+  // Function to handle the stop clock button click
+  function handleClockStop() {
+    // Capture the current time
+    const stopTime = new Date().toISOString();
+
+    // Retrieve the start time from localStorage
+    const startTime = localStorage.getItem("clockStartTime");
+    // Send the start and stop time to the server using fetch API
+    console.log(startTime);
+    console.log(stopTime);
+    clockStartButton.classList.remove("disabled");
+    clockStopButton.classList.add("disabled");
+    fetch("/save-time", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken"), // Ensure CSRF token is sent; you need this for Django to accept the POST request
+      },
+      body: JSON.stringify({ startTime: startTime, stopTime: stopTime }),
+    })
+      .then((response) => response.json())
+      .then(
+        (data) => {
+            console.log(data)
+            localStorage.removeItem("clockStartTime")
+        })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
+  }
+
+  // Function to get CSRF token from cookies - required for Django POST requests
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  // Add click event listeners to your buttons
+  clockStartButton.addEventListener("click", handleClockStart);
+  clockStopButton.addEventListener("click", handleClockStop);
+</script>

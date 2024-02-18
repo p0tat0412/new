@@ -1,0 +1,31 @@
+{% extends 'Main/base.html' %} 
+
+{% block title %}CPForm{% endblock %}
+
+{% block body %}
+
+{% load widget_tweaks %}
+{% load static %}
+
+
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+<body class="">
+
+<div class="form-box">
+        <div class="form-container">
+            <form method="post" action="">
+                {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {% render_field field class="form-control" %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+</div>
+    
+</body>
+
+{% endblock %}

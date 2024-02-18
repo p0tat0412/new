@@ -1,0 +1,65 @@
+{% extends 'Main/base.html' %} 
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+  <body>
+    <style>
+      .button {
+        display: flex;
+        justify-content: flex-end; /* Align button to the right */
+        padding: 20px; /* Padding to prevent the button from sticking to the edge */
+      }
+
+      .cool-add-btn {
+        background-color: #add8e6; /* Light blue background */
+        color: #ffffff; /* White text color */
+        border: none; /* No border */
+        padding: 10px 25px; /* Ample padding for a larger, rounded button */
+        font-size: 18px; /* Larger font size */
+        font-weight: bold; /* Bold font weight */
+        cursor: pointer; /* Cursor changes to pointer on hover */
+        transition: background-color 1s, transform 1s; /* Smooth transition for background color and zoom */
+        border-radius: 30px; /* Fully rounded edges */
+        outline: none; /* Remove outline to keep the style neat */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+      }
+
+      .cool-add-btn:hover {
+        background-color: #90ee90; /* Light green background */
+        transform: scale(1.1); /* Slightly larger zoom to make it pop */
+      }
+    </style>
+
+    <p>Total Companies: {{ company.count }}</p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Company name</th>
+          <th scope="col">KeyID</th>
+          <th scope="col">Catagory</th>
+          <th scope="col">C Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in company%}
+        <tr>
+          <th scope="row">{{forloop.count}}</th>
+          <td><a href="{% url 'contact' c.id%}">{{c.name}}</a></td>
+          <td>{{c.keyid}}</td>
+          <td>{{c.catagory}}</td>
+          <td>{{c.created}}</td>
+          <td><a href="{% url 'cpform_update' c.id%}">Update</a></td>
+          <td><a href="{% url 'company_delete' c.id%}">Delete</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="button">
+      <a href="{% url 'cpform'%}"><button class="cool-add-btn">Add</button></a>
+    </div>
+  </body>
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'Main/base.html' %}
+
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}Add Contact Info{% endblock %}
+
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+<div class="form-container">
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {% render_field field class="form-control" %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="submit-btn">Submit</button>
+    </form>
+</div>
+
+</body>
+
+{% endblock %}
