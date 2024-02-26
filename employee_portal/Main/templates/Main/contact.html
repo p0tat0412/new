@@ -1,9 +1,12 @@
 {% extends 'Main/base.html' %}
 
 {% block title %}Contact{% endblock %}
-
+{% block body %}
 <body>
     <style>
+      /* body{
+        overflow-x: hidden;
+      } */
 .button{
     display: flex;
     justify-content: flex-end; /* Align button to the right */
@@ -31,10 +34,43 @@
     background-color: #90EE90; /* Light green background */
     transform: scale(1.1); /* Slightly larger zoom to make it pop */
 }
+.btn {
+            padding: 10px 5px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #fff; /* White text color */
+            transition: border 1s ease; /* Smooth transition for the border */
+            display: inline-block; /* Allows the use of padding and transitions */
+        }
+
+        .btn-update {
+            background-color: #b3ffb3; /* Light green background */
+            border: 2px solid transparent; /* Transparent border by default */
+        }
+
+        .btn-update:hover {
+            border-color: green; /* Green border on hover */
+        }
+
+        .btn-delete {
+            background-color: #e25959; /* Light blue background */
+            border: 2px solid transparent; /* Transparent border by default */
+        }
+
+        .btn-delete:hover {
+            border-color: rgb(255, 0, 0); /* Blue border on hover */
+        }
+
 
 
     </style>
-    <table class="table">
+    <div id="CONTAINER">
+      
+    <div class="button">
+      <a href="{% url 'coform' company_id %}"><button class="cool-add-btn">Add</button></a>
+
+  </div>
+      <table class="table">
         <thead>
           <tr>
             <th scope="col">ID</th>
@@ -45,8 +81,8 @@
             <th scope="col">Linked In</th>
             <th scope="col">Email</th>
             <th scope="col">Phone Number</th>
-            <th scope="col">Source of Phone Number</th>
-            <th scope="col">Source of infromation</th>
+            <th scope="col">Source of PN</th>
+            <th scope="col">Source of info</th>
           </tr>
         </thead>
         <tbody>
@@ -64,17 +100,32 @@
             <td>{{c.so_information}}</td>
             <td>{{c.updated}}</td>
             <td>{{c.created}}</td>
-            <td><a href="{% url 'coform_update' c.id%}">Update</a></td>
+            <td><a href="{% url 'coform_update' c.id%}" class="btn btn-update">Update</a></td>
+            <td><a href="{% url 'contact_delete' c.id%}" class="btn btn-delete">Delete</a></td>
             
           </tr>
           {% endfor %}
         </tbody>
       </table>
 
-    <div class="button">
-        <a href="{% url 'coform' company_id %}"><button class="cool-add-btn">Add</button></a>
 
     </div>
+
 </body>
+{% if request.user.username != 'epetra' %}
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const companyDiv = document.getElementById("CONTAINER"); // Use getElementById for id
+    const clockStarted = localStorage.getItem("clockStartTime");
+
+    if (!clockStarted) {
+      companyDiv.style.display = 'none'; // Hide the div
+    }
+  });
+</script>
+{% endif %}
+
 
 {% endblock %}

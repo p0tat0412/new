@@ -12,6 +12,8 @@ urlpatterns = [
     path('coform_update/<str:pk>/', coform_update , name = 'coform_update'),
     path('cpform_update/<str:pk>/', cpform_update , name = 'cpform_update'),
     path('company_delete/<str:pk>/', company_delete , name = 'company_delete'),
+    path('contact_delete/<str:pk>/', contact_delete , name = 'contact_delete'),
     path('save-time', save_time, name='save_time'),
-    path('login', login, name='login')
+    path('login', login, name='login'),
+    path('logout', logout_user, name='logout')
 ]

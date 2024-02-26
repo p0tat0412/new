@@ -10,7 +10,7 @@ class company(models.Model):
     description = models.TextField(null = True, blank = True)
     company_description = models.CharField(max_length = 100)
     website_link = models.CharField(max_length = 100)
-    
+    email = models.EmailField(null = True)
 
     updated = models.DateTimeField(auto_now = True)
     created = models.DateTimeField(auto_now_add = True)
@@ -41,3 +41,5 @@ class contact_info(models.Model):
 class TimeRecord(models.Model):
     start_time = models.DateTimeField()
     stop_time = models.DateTimeField()
+    def __str__(self):
+        return f'{self.start_time}<<<<<<<<<<<<<>>>>>>>>>>>>>>>{self.stop_time}'

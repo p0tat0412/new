@@ -1,6 +1,7 @@
 from django.shortcuts import render ,redirect ,get_object_or_404
 from .models import *
 from .forms import *
+from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -11,7 +12,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.shortcuts import render,redirect
-from django.contrib.auth import login as auth_login
+from django.contrib.auth import login as auth_login , logout
 from django.contrib.auth.decorators import login_required
 
 
@@ -35,8 +36,11 @@ def login(request):
 
 @login_required(login_url='/login')
 def home (request):
-    companies = company.objects.all()
-    context = {'company':companies}
+    search = request.GET.get('search') if request.GET.get('search')!= None else ''
+    
+    companies = company.objects.filter(Q (name__icontains=search)
+                                        | Q(keyid__icontains=search)| Q(email__icontains=search) | Q(catagory__icontains=search)| Q(website_link__icontains=search))
+    context = {'show_search' :True , 'company':companies}
     return render(request, 'Main/home.html', context )
 
 @login_required(login_url='/login')
@@ -72,8 +76,8 @@ def coform(request, company_id=None):
     if request.method == 'POST':
         form = contact_form(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect(request.META.get('HTTP_REFERER', 'home'))
+            save = form.save()
+            return redirect('contact', pk = save.company_id)
     context = {'form': form}
     return render(request, 'Main/coform.html', context)
 
@@ -86,7 +90,7 @@ def contact(request,pk):
     # Then, filter contact_info objects by the company
     contacts = contact_info.objects.filter(company=company_instance)
 
-    context = {'contacts':contacts, 'company_id':pk}
+    context = {'show_search' :False , 'contacts':contacts, 'company_id':pk}
     return render (request, 'Main/contact.html', context)
 
 @login_required(login_url='/login')
@@ -97,6 +101,20 @@ def company_delete(request,pk):
         return redirect('home')
     
     return render (request, 'Main/delete.html')
+@login_required(login_url='/login')
+def contact_delete(request,pk):
+    contacts = contact_info.objects.get(id=pk)
+    if request.method == 'POST':
+        company_id = contacts.company.id if contacts.company else None
+        contacts.delete()
+        return redirect('contact', pk  = company_id)
+    return render (request, 'Main/delete.html')
+
+@login_required(login_url='/login')
+def logout_user(request):
+    
+    logout(request)
+    return redirect('login')
 
 @login_required(login_url='/login')
 def coform_update(request,pk):
