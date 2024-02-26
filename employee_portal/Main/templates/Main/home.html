@@ -55,11 +55,26 @@
         .btn-delete:hover {
             border-color: rgb(255, 0, 0); /* Blue border on hover */
         }
+        .total-companies {
+        padding: 15px 25px; /* Slightly larger padding for a more pronounced effect */
+        border-radius: 15px; /* Soft rounded corners */
+        background: linear-gradient(to right, #00008B, #1E90FF, #ADD8E6); /* Gradient: dark blue -> ocean blue -> light blue */
+        color: white; /* White text color for contrast */
+        font-size: 20px; /* A bit larger font size for emphasis */
+        font-weight: bold; /* Bold font for emphasis */
+        text-align: center; /* Center-align the text */
+        display: inline-block; /* Allows the use of margin and text-align */
+        transition: transform 0.3s ease; /* Smooth zoom effect on hover */
+        margin: 20px; /* Margin for spacing */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: subtle shadow for depth */
+    }
 
+    .total-companies:hover {
+        transform: scale(1.05);}
     </style>
 <div class="cont" id = 'company'>
 
-  <p>Total Companies: {{ company.count }}</p>  <div class="button">
+  <p class="total-companies">Total Companies: {{ company.count }}</p>  <div class="button">
     <a href="{% url 'cpform'%}"><button class="cool-add-btn">Add</button></a>
   </div>
   <table class="table">
@@ -77,6 +92,7 @@
     </thead>
     <tbody>
       {% for c in company%}
+      
       <tr>
         <th scope="row">{{forloop.count}}</th>
         <td><a href="{% url 'contact' c.id%}">{{c.name}}</a></td>
